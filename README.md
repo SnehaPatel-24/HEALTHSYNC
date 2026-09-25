@@ -1,381 +1,90 @@
-# 🏥 Hospital Management System (HMS)
+# 🏥 HEALTHSYNC — Healthcare Management Platform
 
-A comprehensive Hospital Management System (HMS) backend application built using **Spring Boot**, **Spring Security**, **JWT Authentication**, **Spring Data JPA**, and **MySQL**.
+A comprehensive Healthcare & Hospital Management Platform built using **Spring Boot**, **Spring Security**, **JWT Authentication**, **Spring Data JPA**, **MySQL**, **Pessimistic Locking**, and a modern web dashboard.
 
-This project provides secure REST APIs for managing patients, doctors, appointments, prescriptions, and dashboard statistics while implementing industry-standard backend development practices.
+This application provides secure REST APIs for managing patients, doctors, appointments, prescriptions, and real-time dashboard statistics while implementing industry-standard backend development practices.
 
 ---
 
-## 🚀 Features
+## 🚀 Key Features
+
+### 🔒 Pessimistic Locking & Concurrency Control
+* Implements `@Lock(LockModeType.PESSIMISTIC_WRITE)` to prevent double booking.
+* Rollback management via `@Transactional` to guarantee database consistency.
 
 ### 🔐 Authentication & Authorization
-
-* JWT Token Based Authentication
+* JWT Token-Based Authentication & Password Reset support
 * Spring Security Integration
-* Role-Based Access Control (RBAC)
-* Secure REST APIs
+* Role-Based Access Control (RBAC) — Admin, Doctor, Receptionist
+* Secure REST APIs & Custom Validation Messages
 
 ### 👨‍⚕️ Doctor Management
-
-* Create Doctor
-* Get Doctor By ID
-* Get All Doctors
-* Update Doctor
-* Delete Doctor
-* Search Doctors By Specialization
-* Role-Based Authorization
+* Create Doctor, Update, Delete, View by ID
+* Filter Doctors by Specialization
+* Role-based access control for staff
 
 ### 🧑 Patient Management
-
-* Create Patient
-* Get Patient By ID
-* Get All Patients
-* Update Patient
-* Delete Patient
-* Search Patients
-* Pagination & Sorting Support
+* Full CRUD Operations (Create, Read, Update, Delete)
+* Search Patients by keyword/name
+* Pagination & Sorting Support (`Pageable`, `Sort`)
 
 ### 📅 Appointment Management
-
-* Schedule Appointment
-* Get Appointment Details
-* Update Appointment
-* Delete Appointment
-* Complete Appointment
-* Cancel Appointment
-* Appointment Status Tracking
+* Book, Complete, Cancel, and Delete Appointments
+* Automated Double-Booking Conflict Prevention
+* Appointment Status Tracking (`SCHEDULED`, `COMPLETED`, `CANCELLED`)
 
 ### 💊 Prescription Management
+* Create, Update, Delete, and Link Prescriptions to Patients & Doctors
+* Search Prescriptions by Patient Code or Doctor
 
-* Create Prescription
-* Get Prescription By ID
-* Get All Prescriptions
-* Update Prescription
-* Delete Prescription
-* Search Prescriptions By Patient
-* Search Prescriptions By Doctor
-* Link Prescription With:
-
-    * Patient
-    * Doctor
-    * Appointment
-
-### 📊 Dashboard Module
-
-* Total Patients Count
-* Total Doctors Count
-* Total Appointments Count
-* Total Prescriptions Count
-* Today's Appointments
-* Completed Appointments
-* Cancelled Appointments
-
-### ⚙️ Additional Features
-
-* DTO Pattern
-* Global Exception Handling
-* Custom Exceptions
-* Validation Using Jakarta Validation
-* Swagger/OpenAPI Documentation
-* Pagination & Sorting
-* Search APIs
-* Clean Layered Architecture
+### 📊 Real-Time Dashboard
+* Live Stats for Total Patients, Doctors, Appointments, Completed, Cancelled, and Prescriptions
 
 ---
 
 ## 🛠️ Tech Stack
 
-### Backend
-
-* Java 21
-* Spring Boot 4
-* Spring Security
-* Spring Data JPA
-* Hibernate ORM
-
-### Database
-
-* MySQL
-
-### Authentication
-
-* JWT (JSON Web Token)
-
-### Build Tool
-
-* Maven
-
-### Documentation
-
-* Swagger / OpenAPI
-
-### Utilities
-
-* Lombok
+* **Backend**: Java 22, Spring Boot 4, Spring Security, Spring Data JPA, Hibernate ORM
+* **Frontend**: HTML5, CSS3, JavaScript (ES6+), Modern SPA Dashboard
+* **Database**: MySQL 9.x
+* **Security & Auth**: JWT (JSON Web Tokens), BCrypt Password Encoder
+* **Documentation**: Swagger UI / OpenAPI 3.0
 
 ---
 
-## 📁 Project Architecture
+## 💻 Local Setup Instructions
 
-```text
-Controller Layer
-        ↓
-Service Layer
-        ↓
-Repository Layer
-        ↓
-Database
-```
-
-### Architecture Overview
-
-#### Controller Layer
-
-Handles HTTP requests and responses.
-
-#### Service Layer
-
-Contains business logic and validations.
-
-#### Repository Layer
-
-Interacts with the database using Spring Data JPA.
-
-#### DTO Layer
-
-Transfers data between API and application layers.
-
-#### Security Layer
-
-Manages authentication and authorization using JWT and Spring Security.
-
----
-
-## 🔑 Roles
-
-### ADMIN
-
-* Full Access
-* Manage Patients
-* Manage Doctors
-* Manage Appointments
-* Manage Prescriptions
-* Access Dashboard
-
-### DOCTOR
-
-* View Patients
-* Manage Prescriptions
-* View Dashboard Data
-* Manage Appointments
-
-### RECEPTIONIST
-
-* Register Patients
-* Manage Appointments
-* View Patient Records
-
----
-
-## 📌 API Endpoints
-
-### Authentication
-
-```http
-POST /api/auth/register
-POST /api/auth/login
-```
-
-### Patients
-
-```http
-POST   /api/patients
-GET    /api/patients
-GET    /api/patients/{id}
-PUT    /api/patients/{id}
-DELETE /api/patients/{id}
-GET    /api/patients/search
-```
-
-### Doctors
-
-```http
-POST   /api/doctors
-GET    /api/doctors
-GET    /api/doctors/{id}
-PUT    /api/doctors/{id}
-DELETE /api/doctors/{id}
-GET    /api/doctors/specialization/{specialization}
-```
-
-### Appointments
-
-```http
-POST   /api/appointments
-GET    /api/appointments
-GET    /api/appointments/{id}
-PUT    /api/appointments/{id}
-DELETE /api/appointments/{id}
-
-PUT    /api/appointments/{id}/complete
-PUT    /api/appointments/{id}/cancel
-```
-
-### Prescriptions
-
-```http
-POST   /api/prescriptions
-GET    /api/prescriptions
-GET    /api/prescriptions/{id}
-PUT    /api/prescriptions/{id}
-DELETE /api/prescriptions/{id}
-
-GET    /api/prescriptions/patient/{patientId}
-GET    /api/prescriptions/doctor/{doctorId}
-```
-
-### Dashboard
-
-```http
-GET /api/dashboard/stats
-```
-
----
-
-## 🔄 Entity Relationships
-
-### Prescription Relationships
-
-```text
-Prescription
-    ↓
-Patient
-
-Prescription
-    ↓
-Doctor
-
-Prescription
-    ↓
-Appointment
-```
-
-Implemented using:
-
-```java
-@ManyToOne
-@JoinColumn(...)
-```
-
----
-
-## 📖 Swagger Documentation
-
-After starting the application:
-
-```text
-http://localhost:8080/swagger-ui.html
-```
-
-or
-
-```text
-http://localhost:8080/swagger-ui/index.html
-```
-
----
-
-### Swagger UI Preview
-
-![Swagger UI](images/swagger-home.png)
-
-
-### Dashboard Statistics API
-
-Example response from the dashboard endpoint.
-
-![Dashboard API](images/dashboard-api.png)
-
-## ▶️ Running the Project
-
-### Clone Repository
-
+### 1. Clone Repository
 ```bash
-git clone https://github.com/Yash2930/hospital-management-system.git
+git clone https://github.com/SnehaPatel-24/HEALTHSYNC.git
+cd HEALTHSYNC
 ```
 
-### Navigate To Project
-
-```bash
-cd hospital-management-system
-```
-
-### Configure Database
-
-Update:
-
+### 2. Configure Database
+Update `src/main/resources/application.properties`:
 ```properties
-application.properties
-```
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/hms
+spring.datasource.url=jdbc:mysql://localhost:3306/hms?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true
 spring.datasource.username=root
-spring.datasource.password=your_password
+spring.datasource.password=your_mysql_password
 ```
 
-### Run Application
-
+### 3. Run Application
 ```bash
-mvn spring-boot:run
+mvnw spring-boot:run
 ```
+Open **http://localhost:8080** in your browser!
 
 ---
 
-## 🎯 Concepts Demonstrated
+## 👩‍💻 Author
 
-* Spring Boot REST APIs
-* Spring Security
-* JWT Authentication
-* Role-Based Authorization
-* DTO Pattern
-* Pagination & Sorting
-* Validation
-* Exception Handling
-* JPA Relationships
-* Dashboard Reporting APIs
-* Clean Architecture
+**Sneha Patel**
+
+Software Developer | Full-Stack & Java Backend Specialist
+
+* **GitHub**: [@SnehaPatel-24](https://github.com/SnehaPatel-24)
+* **Project Repository**: [HEALTHSYNC](https://github.com/SnehaPatel-24/HEALTHSYNC)
 
 ---
 
-## 🚀 Future Improvements
-
-* Unit Testing using JUnit & Mockito
-* Docker Containerization
-* Cloud Deployment
-* Appointment Refactoring Using Entity Relationships
-* Billing Module
-* Medical History Module
-* Audit Logging
-* Notification Service (Email/SMS)
-
----
-
-## 👨‍💻 Author
-
-**Yashwardhan Singh Rathore**
-
-Associate Programmer | Java Backend Developer
-
-Currently focused on:
-
-* Java
-* Spring Boot
-* Spring Security
-* REST APIs
-* Microservices
-* DSA & System Design
-
----
-
-⭐ If you found this project useful, consider giving it a star.
+⭐ If you found this project useful, consider giving it a star!
