@@ -5,16 +5,21 @@ import com.hms.hospital_management_system.entity.Patient;
 import com.hms.hospital_management_system.entity.Appointment;
 import com.hms.hospital_management_system.entity.Prescription;
 import com.hms.hospital_management_system.enums.AppointmentStatus;
+import com.hms.hospital_management_system.entity.User;
+import com.hms.hospital_management_system.enums.Role;
+import com.hms.hospital_management_system.repository.UserRepository;
 import com.hms.hospital_management_system.repository.DoctorRepository;
 import com.hms.hospital_management_system.repository.PatientRepository;
 import com.hms.hospital_management_system.repository.AppointmentRepository;
 import com.hms.hospital_management_system.repository.PrescriptionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.LocalDateTime;
 
 @Component
 @RequiredArgsConstructor
@@ -24,6 +29,8 @@ public class DatabaseSeeder implements CommandLineRunner {
     private final PatientRepository patientRepository;
     private final AppointmentRepository appointmentRepository;
     private final PrescriptionRepository prescriptionRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public void run(String... args) throws Exception {
@@ -38,6 +45,29 @@ public class DatabaseSeeder implements CommandLineRunner {
     }
 
     private void seedData() {
+        // 0. Seed Users (Sneha Patel Accounts)
+        if (!userRepository.existsByEmail("snehapatel869a@gmail.com")) {
+            User userRec = User.builder()
+                    .fullName("Sneha Patel")
+                    .email("snehapatel869a@gmail.com")
+                    .password(passwordEncoder.encode("Sneha@378"))
+                    .role(Role.RECEPTIONIST)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            userRepository.save(userRec);
+        }
+
+        if (!userRepository.existsByEmail("admin@healthsync.in")) {
+            User userAdmin = User.builder()
+                    .fullName("Sneha Patel")
+                    .email("admin@healthsync.in")
+                    .password(passwordEncoder.encode("Admin@123"))
+                    .role(Role.ADMIN)
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            userRepository.save(userAdmin);
+        }
+
         // 1. Seed Doctors (Indian Names)
         Doctor doc1 = new Doctor();
         doc1.setDoctorCode("DOC101");
