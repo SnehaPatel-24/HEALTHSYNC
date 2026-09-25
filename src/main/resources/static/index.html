@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>HEALTHSYNC — Healthcare Management Platform</title>
+    <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ==================== AUTH SCREEN ==================== -->
+<div id="auth-screen">
+    <div class="auth-box">
+        <div class="auth-logo">🏥</div>
+        <h1>HEALTHSYNC</h1>
+        <p class="auth-subtitle">Healthcare Management Platform</p>
+
+        <!-- Tab Buttons -->
+        <div class="auth-tabs">
+            <button class="tab-btn active" onclick="showTab('login')">Login</button>
+            <button class="tab-btn" onclick="showTab('register')">Register</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="login-form">
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="login-email" placeholder="Enter your email" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="login-password" placeholder="Enter your password" />
+            </div>
+            <div id="login-error" class="error-msg"></div>
+            <button class="btn btn-primary full-width" onclick="login()">Login</button>
+            <p style="text-align:center; margin-top:12px;">
+                <a href="#" onclick="showTab('forgot')" style="color:#60a5fa; font-size:13px; text-decoration:none;">Forgot Password?</a>
+            </p>
+        </div>
+
+        <!-- Forgot Password Form -->
+        <div id="forgot-password-form" style="display:none;">
+            <p style="color:#9ca3af; font-size:13px; margin-bottom:16px; text-align:center;">Enter your email and set a new password.</p>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="fp-email" placeholder="Enter your registered email" />
+            </div>
+            <div class="form-group">
+                <label>New Password</label>
+                <input type="password" id="fp-new-password" placeholder="Enter new password" />
+            </div>
+            <div class="form-group">
+                <label>Confirm Password</label>
+                <input type="password" id="fp-confirm-password" placeholder="Confirm new password" />
+            </div>
+            <div id="fp-error" class="error-msg"></div>
+            <div id="fp-success" style="color:#22c55e; font-size:13px; margin-bottom:10px;"></div>
+            <button class="btn btn-primary full-width" onclick="resetPassword()">Reset Password</button>
+            <p style="text-align:center; margin-top:12px;">
+                <a href="#" onclick="showTab('login')" style="color:#60a5fa; font-size:13px; text-decoration:none;">← Back to Login</a>
+            </p>
+        </div>
+
+        <!-- Register Form -->
+        <div id="register-form" style="display:none;">
+            <div class="form-group">
+                <label>Full Name</label>
+                <input type="text" id="reg-name" placeholder="Enter your full name" />
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="reg-email" placeholder="Enter your email" />
+            </div>
+            <div class="form-group">
+                <label>Password</label>
+                <input type="password" id="reg-password" placeholder="Create a password" />
+            </div>
+            <div class="form-group">
+                <label>Role</label>
+                <select id="reg-role">
+                    <option value="ADMIN">Admin</option>
+                    <option value="DOCTOR">Doctor</option>
+                    <option value="RECEPTIONIST">Receptionist</option>
+                </select>
+            </div>
+            <div id="reg-error" class="error-msg"></div>
+            <div id="reg-success" class="success-msg"></div>
+            <button class="btn btn-primary full-width" onclick="register()">Register</button>
+        </div>
+    </div>
+</div>
+
+<!-- ==================== MAIN APP ==================== -->
+<div id="app" style="display:none;">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-logo">🏥 HEALTHSYNC</div>
+        <nav>
+            <a class="nav-link active" onclick="showSection('dashboard')">📊 Dashboard</a>
+            <a class="nav-link" onclick="showSection('patients')">🧑 Patients</a>
+            <a class="nav-link" onclick="showSection('doctors')">👨‍⚕️ Doctors</a>
+            <a class="nav-link" onclick="showSection('appointments')">📅 Appointments</a>
+            <a class="nav-link" onclick="showSection('prescriptions')">💊 Prescriptions</a>
+        </nav>
+        <div class="sidebar-bottom">
+            <div id="sidebar-user" class="sidebar-user"></div>
+            <button class="btn btn-danger full-width" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+
+        <!-- Toast Notification -->
+        <div id="toast" class="toast"></div>
+
+        <!-- ===== DASHBOARD ===== -->
+        <div id="dashboard" class="section active">
+            <h2 class="section-title">Dashboard</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-icon">🧑</div>
+                    <div class="stat-number" id="stat-patients">—</div>
+                    <div class="stat-label">Total Patients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">👨‍⚕️</div>
+                    <div class="stat-number" id="stat-doctors">—</div>
+                    <div class="stat-label">Total Doctors</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📅</div>
+                    <div class="stat-number" id="stat-appointments">—</div>
+                    <div class="stat-label">Total Appointments</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-number" id="stat-completed">—</div>
+                    <div class="stat-label">Completed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">❌</div>
+                    <div class="stat-number" id="stat-cancelled">—</div>
+                    <div class="stat-label">Cancelled</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">💊</div>
+                    <div class="stat-number" id="stat-prescriptions">—</div>
+                    <div class="stat-label">Prescriptions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== PATIENTS ===== -->
+        <div id="patients" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Patients</h2>
+                <button class="btn btn-primary" onclick="openModal('patient-modal')">+ Add Patient</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="patient-search" placeholder="Search by name..." oninput="searchPatients()" />
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Gender</th>
+                            <th>Blood Group</th>
+                            <th>Mobile</th>
+                            <th>Disease</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patients-table-body"></tbody>
+                </table>
+            </div>
+            <div class="pagination">
+                <button class="btn btn-sm" onclick="prevPage('patients')">← Prev</button>
+                <span id="patients-page-info">Page 1</span>
+                <button class="btn btn-sm" onclick="nextPage('patients')">Next →</button>
+            </div>
+        </div>
+
+        <!-- ===== DOCTORS ===== -->
+        <div id="doctors" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Doctors</h2>
+                <button class="btn btn-primary" onclick="openModal('doctor-modal')">+ Add Doctor</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Name</th>
+                            <th>Specialization</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Experience</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="doctors-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== APPOINTMENTS ===== -->
+        <div id="appointments" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Appointments</h2>
+                <button class="btn btn-primary" onclick="openModal('appointment-modal')">+ Book Appointment</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Patient ID</th>
+                            <th>Doctor</th>
+                            <th>Date</th>
+                            <th>Time</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="appointments-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- ===== PRESCRIPTIONS ===== -->
+        <div id="prescriptions" class="section">
+            <div class="section-header">
+                <h2 class="section-title">Prescriptions</h2>
+                <button class="btn btn-primary" onclick="openPrescriptionModal()">+ Add Prescription</button>
+            </div>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Code</th>
+                            <th>Diagnosis</th>
+                            <th>Medicines</th>
+                            <th>Dosage</th>
+                            <th>Instructions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="prescriptions-table-body"></tbody>
+                </table>
+            </div>
+        </div>
+
+    </div><!-- end main-content -->
+</div><!-- end app -->
+
+<!-- ==================== MODALS ==================== -->
+
+<!-- Patient Modal -->
+<div id="patient-modal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="patient-modal-title">Add Patient</h3>
+            <button class="close-btn" onclick="closeModal('patient-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="patient-id" />
+            <div class="form-row">
+                <div class="form-group">
+                    <label>First Name *</label>
+                    <input type="text" id="p-firstName" placeholder="First name" />
+                </div>
+                <div class="form-group">
+                    <label>Last Name *</label>
+                    <input type="text" id="p-lastName" placeholder="Last name" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Gender *</label>
+                    <select id="p-gender">
+                        <option value="">Select gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Blood Group</label>
+                    <select id="p-bloodGroup">
+                        <option value="">Select</option>
+                        <option>A+</option><option>A-</option>
+                        <option>B+</option><option>B-</option>
+                        <option>AB+</option><option>AB-</option>
+                        <option>O+</option><option>O-</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="p-dob" />
+                </div>
+                <div class="form-group">
+                    <label>Mobile (10 digits)</label>
+                    <input type="text" id="p-mobile" placeholder="9876543210" maxlength="10" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" id="p-email" placeholder="patient@email.com" />
+            </div>
+            <div class="form-group">
+                <label>Address</label>
+                <input type="text" id="p-address" placeholder="Full address" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Disease</label>
+                    <input type="text" id="p-disease" placeholder="Diagnosis / disease" />
+                </div>
+                <div class="form-group">
+                    <label>Allergies</label>
+                    <input type="text" id="p-allergies" placeholder="Known allergies" />
+                </div>
+            </div>
+            <div id="patient-modal-error" class="error-msg"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('patient-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="savePatient()">Save Patient</button>
+        </div>
+    </div>
+</div>
+
+<!-- Doctor Modal -->
+<div id="doctor-modal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="doctor-modal-title">Add Doctor</h3>
+            <button class="close-btn" onclick="closeModal('doctor-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="doctor-id" />
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Full Name *</label>
+                    <input type="text" id="d-fullName" placeholder="Dr. Full Name" />
+                </div>
+                <div class="form-group">
+                    <label>Specialization *</label>
+                    <input type="text" id="d-specialization" placeholder="e.g. Cardiology" />
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="d-email" placeholder="doctor@hms.com" />
+                </div>
+                <div class="form-group">
+                    <label>Phone</label>
+                    <input type="text" id="d-phone" placeholder="Phone number" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Experience (Years)</label>
+                <input type="number" id="d-experience" placeholder="e.g. 5" min="0" />
+            </div>
+            <div id="doctor-modal-error" class="error-msg"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('doctor-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveDoctor()">Save Doctor</button>
+        </div>
+    </div>
+</div>
+
+<!-- Appointment Modal -->
+<div id="appointment-modal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="appointment-modal-title">Book Appointment</h3>
+            <button class="close-btn" onclick="closeModal('appointment-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="appointment-id" />
+            <div class="form-group">
+                <label>Patient ID *</label>
+                <input type="number" id="a-patientId" placeholder="Enter patient ID" />
+            </div>
+            <div class="form-group">
+                <label>Doctor Name *</label>
+                <input type="text" id="a-doctorName" placeholder="e.g. Dr. Ananya Sharma" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Date *</label>
+                    <input type="date" id="a-date" />
+                </div>
+                <div class="form-group">
+                    <label>Time *</label>
+                    <input type="time" id="a-time" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Remarks</label>
+                <input type="text" id="a-remarks" placeholder="Any notes or remarks" />
+            </div>
+            <div id="appointment-modal-error" class="error-msg"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('appointment-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="saveAppointment()">Book Appointment</button>
+        </div>
+    </div>
+</div>
+
+<!-- Prescription Modal -->
+<div id="prescription-modal" class="modal-overlay" style="display:none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h3 id="prescription-modal-title">Add Prescription</h3>
+            <button class="close-btn" onclick="closeModal('prescription-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <input type="hidden" id="prescription-id" />
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Patient Code *</label>
+                    <select id="pr-patientCode">
+                        <option value="">-- Select Patient --</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Doctor *</label>
+                    <select id="pr-doctorCode">
+                        <option value="">-- Select Doctor --</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Appointment ID</label>
+                <input type="number" id="pr-appointmentId" placeholder="Appointment ID (optional)" />
+            </div>
+            <div class="form-group">
+                <label>Diagnosis *</label>
+                <input type="text" id="pr-diagnosis" placeholder="e.g. Hypertension" />
+            </div>
+            <div class="form-group">
+                <label>Medicines *</label>
+                <input type="text" id="pr-medicines" placeholder="e.g. Aspirin, Vitamin C" />
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Dosage</label>
+                    <input type="text" id="pr-dosage" placeholder="e.g. 1 tablet daily" />
+                </div>
+                <div class="form-group">
+                    <label>Instructions</label>
+                    <input type="text" id="pr-instructions" placeholder="e.g. After meals" />
+                </div>
+            </div>
+            <div id="prescription-modal-error" class="error-msg"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('prescription-modal')">Cancel</button>
+            <button class="btn btn-primary" onclick="savePrescription()">Save Prescription</button>
+        </div>
+    </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div id="confirm-modal" class="modal-overlay" style="display:none;">
+    <div class="modal modal-sm">
+        <div class="modal-header">
+            <h3>Confirm Delete</h3>
+            <button class="close-btn" onclick="closeModal('confirm-modal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <p>Are you sure you want to delete this record? This action cannot be undone.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
+            <button class="btn btn-danger" id="confirm-delete-btn">Yes, Delete</button>
+        </div>
+    </div>
+</div>
+
+<script src="app.js?v=7"></script>
+</body>
+</html>
