@@ -28,7 +28,7 @@ public class DatabaseSeeder implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
         // If old western seed data is present, update/re-seed with Indian names
-        if (doctorRepository.count() == 0 || doctorRepository.findAll().stream().anyMatch(d -> d.getFullName().contains("Sarah Connor"))) {
+        if (doctorRepository.count() == 0 || doctorRepository.count() < 5) {
             prescriptionRepository.deleteAll();
             appointmentRepository.deleteAll();
             patientRepository.deleteAll();
