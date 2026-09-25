@@ -1,5 +1,5 @@
 // HEALTHSYNC — app.js | Connects frontend to Spring Boot backend
-const API = 'http://localhost:8080';
+const API = 'https://healthsync-production-4c33.up.railway.app';
 let token     = localStorage.getItem('hms_token') || '';
 let userEmail = localStorage.getItem('hms_email') || '';
 let userRole  = localStorage.getItem('hms_role')  || '';
