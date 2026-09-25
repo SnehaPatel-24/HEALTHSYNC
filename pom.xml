@@ -11,8 +11,8 @@
 	<groupId>com.hms</groupId>
 	<artifactId>hospital-management-system</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name/>
-	<description/>
+	<name>HEALTHSYNC</name>
+	<description>Healthcare &amp; Hospital Management Platform</description>
 	<url/>
 	<licenses>
 		<license/>
