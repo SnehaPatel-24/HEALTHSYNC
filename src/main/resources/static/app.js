@@ -426,13 +426,14 @@ async function loadAppointments() {
         const tbody = document.getElementById('appointments-table-body');
         tbody.innerHTML = '';
         if (!rows.length) {
-            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#6b7280;padding:30px">No appointments found. Book one!</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;color:#6b7280;padding:30px">No appointments found. Book one!</td></tr>';
             return;
         }
         rows.forEach(a => {
             const badge = `<span class="badge badge-${(a.status||'').toLowerCase()}">${a.status ?? '—'}</span>`;
             tbody.innerHTML += `
             <tr>
+                <td>${a.id ?? '—'}</td>
                 <td>${a.appointmentCode ?? '—'}</td>
                 <td>${a.patientId ?? '—'}</td>
                 <td>${a.doctorName ?? '—'}</td>
