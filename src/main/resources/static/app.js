@@ -590,6 +590,6 @@ async function deleteRecord(type, id) {
         if (type === 'prescription') loadPrescriptions();
     } catch (err) {
         closeModal('confirm-modal');
-        showToast('Delete failed: ' + err.message, 'error');
+        showToast('Delete failed','error');
     }
 }
